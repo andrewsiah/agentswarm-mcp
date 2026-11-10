@@ -13,7 +13,7 @@ Exemples de framework (OpenAI Agents SDK, LangGraph, Claude Agent SDK, Pi, Pytho
 
 ### Installation en une ligne
 
-Exige Node.js >= 18 et son `npx` inclus. Ces commandes téléchargent le package tarball v1.0.1 depuis la release GitHub et l'exécutent avec vos permissions utilisateur ; aucun package npm n'est nécessaire. Examinez la source avant si vous le souhaitez. npm 12 bloque les tarballs distants par défaut, donc les commandes ajoutent `--allow-remote=all`, ce qui permet les URLs de tarball distants pour cette commande unique. npm 11 supporte également cette option ; les versions antérieures de npm ne la connaissent pas et avertissent mais continuent. Le package n'a aucune dépendance, donc seul ce tarball est récupéré.
+Exige Node.js >= 18 et son `npx` inclus. Ces commandes téléchargent le package tarball v1.0.1 depuis la release GitHub et l'exécutent avec vos permissions utilisateur ; aucun package npm n'est nécessaire. Examinez la source avant si vous le souhaitez. npm 12 bloque les tarballs distants par défaut, donc les commandes ajoutent `--allow-remote=all`, ce qui permet les URLs de tarball distants pour cette commande unique. npm 11 supporte également cette option ; les versions antérieures de npm ne la connaissent pas et avertissent mais continuent. Le package n'a aucun dépendance, donc seul ce tarball est récupéré.
 
 **Pi :**
 
