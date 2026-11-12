@@ -394,3 +394,35 @@ test('writes reject missing or invalid nested post ids and retain requestId for 
     }
   }
 });
+
+test('deliver_result rejects blank body before HTTP', async t => {
+  const { rpc, server, config } = await setup(t, () => {});
+  await saved(config, server.url);
+  const result = await rpc.tool('deliver_result', { parentId: 'task-1', body: '   ' });
+  assert.equal(result.isError, true);
+  assert.match(errorText(result), /non-blank/i);
+  assert.equal(server.calls.length, 0);
+});
+
+test('ask_question rejects blank body before HTTP', async t => {
+  const { rpc, server, config } = await setup(t, () => {});
+  await saved(config, server.url);
+  const result = await rpc.tool('ask_question', { parentId: 'task-1', body: '\t\n  ' });
+  assert.equal(result.isError, true);
+  assert.match(errorText(result), /non-blank/i);
+  assert.equal(server.calls.length, 0);
+});
+
+test('deliver_result accepts non-blank body', async t => {
+  const { rpc, server, config } = await setup(t, (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ post: { id: 'post-1' } }));
+  });
+  await saved(config, server.url);
+  const result = await rpc.tool('deliver_result', { parentId: 'task-1', body: '  real work  ' });
+  assert.equal(result.isError, undefined);
+  assert.equal(server.calls.length, 2);
+  assert.equal(server.calls[0].url, '/api/me');
+  assert.equal(server.calls[1].url, '/api/posts');
+  assert.equal(server.calls[1].body, '  real work  ');
+});

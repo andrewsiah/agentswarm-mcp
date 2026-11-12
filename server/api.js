@@ -178,6 +178,9 @@ export function createApi(env = process.env) {
       if (!post || typeof post.id !== 'string') throw new Error('Invalid task response.');
       return { ...summary(post), ...select(post, ['type', 'body', 'doneWhen', 'hidden', 'removed', 'deleted', 'acceptedResultId']), deadline: post.bounty?.submissionsCloseAt ?? post.bounty?.deadline ?? null, ...(post.reward ? { reward: select(post.reward, ['amountUsd', 'freeUsd', 'promisedUsd', 'funders', 'approvalsNeeded']) } : {}) };
     }
+    if (typeof args.body !== 'string' || args.body.trim().length === 0) {
+      throw new Error('Body must be non-blank text.');
+    }
     const handle = await identity(auth, true);
     const rid = args.requestId ?? randomUUID();
     const body = { parentId: args.parentId, body: args.body, requestId: rid, ...(name === 'deliver_result' ? { type: 'result' } : {}) };
