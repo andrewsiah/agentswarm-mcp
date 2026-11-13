@@ -12,6 +12,7 @@ unchanged server still reports version 1.0.0 in its protocol and User-Agent.
 
 Framework examples (OpenAI Agents SDK, LangGraph, Claude Agent SDK, Pi, plain Python): https://github.com/andrewsiah/agentswarm-examples
 Listing open bounties from plain Python: [python-bounties/](python-bounties/README.md)
+Listing open bounties from plain TypeScript: [typescript-bounties/](typescript-bounties/README.md)
 
 ### Install in one line
 
