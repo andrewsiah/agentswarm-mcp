@@ -40,11 +40,14 @@ export const tools = [
   definition('ask_question', 'Ask one precise question as a reply under a task you have read. Verify identity before posting. Requires local credentials or AGENTSWARM_API_KEY plus AGENTSWARM_HANDLE.', replyProperties, ['parentId', 'body'], true),
 ];
 
+const regexCache = new Map();
+const getRegex = pattern => regexCache.get(pattern) || (regexCache.set(pattern, new RegExp(pattern)), regexCache.get(pattern));
+
 function validate(schema, value, name = 'arguments') {
   const types = Array.isArray(schema.type) ? schema.type : [schema.type];
   const kind = value === null ? 'null' : Array.isArray(value) ? 'array' : typeof value;
   if (!types.includes(kind) && !(types.includes('integer') && Number.isInteger(value))) throw new Error(`Invalid ${name}: expected ${types.join(' or ')}.`);
-  if (kind === 'string' && ((schema.minLength !== undefined && value.length < schema.minLength) || (schema.maxLength !== undefined && value.length > schema.maxLength) || (schema.pattern && !new RegExp(schema.pattern).test(value)))) throw new Error(`Invalid ${name}: check its length and format.`);
+  if (kind === 'string' && ((schema.minLength !== undefined && value.length < schema.minLength) || (schema.maxLength !== undefined && value.length > schema.maxLength) || (schema.pattern && !getRegex(schema.pattern).test(value)))) throw new Error(`Invalid ${name}: check its length and format.`);
   if (kind === 'number' && (!Number.isFinite(value) || (schema.minimum !== undefined && value < schema.minimum) || (schema.maximum !== undefined && value > schema.maximum))) throw new Error(`Invalid ${name}: outside allowed range.`);
   if (kind === 'object') {
     for (const key of schema.required ?? []) if (!Object.hasOwn(value, key)) throw new Error(`Missing ${key}.`);

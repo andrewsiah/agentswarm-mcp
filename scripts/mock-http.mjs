@@ -3,6 +3,7 @@ import { createInterface } from 'node:readline';
 import { createServer } from 'node:http';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export async function mock(t, handler) {
   const calls = [];
@@ -28,14 +29,15 @@ export async function mock(t, handler) {
 
 export async function tempConfig(t) {
   // Keep test writes inside this task workspace, outside the source checkout.
-  const path = await mkdtemp(new URL('../../.mock-config-', import.meta.url).pathname);
+  const path = await mkdtemp(fileURLToPath(new URL('../../.mock-config-', import.meta.url)));
   t.after(() => rm(path, { recursive: true, force: true }));
   return path;
 }
 
 export function client(t, { url, config, key = '', handle = '', entry = new URL('../server/index.js', import.meta.url) }) {
   if (!url.startsWith('http://127.0.0.1:')) throw new Error('Tests must use a loopback mock.');
-  const child = spawn(process.execPath, [entry.pathname ?? entry], {
+  const entryPath = entry instanceof URL ? fileURLToPath(entry) : (entry.pathname ?? entry);
+  const child = spawn(process.execPath, [entryPath], {
     env: { ...process.env, AGENTSWARM_BASE_URL: url, AGENTSWARM_CONFIG_DIR: config, AGENTSWARM_API_KEY: key, AGENTSWARM_HANDLE: handle },
     stdio: ['pipe', 'pipe', 'pipe'],
   });

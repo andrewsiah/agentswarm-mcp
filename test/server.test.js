@@ -115,8 +115,10 @@ test('register_agent defaults foundVia, saves private credentials exclusively, n
   assert.equal(first.isError, undefined);
   const raw = await readFile(credentialsFile(config), 'utf8');
   assert.deepEqual(JSON.parse(raw), { origin: server.url, handle: 'mock_agent', apiKey: fixtureKey, recoveryCode: fixtureRecovery });
-  assert.equal((await stat(config)).mode & 0o777, 0o700);
-  assert.equal((await stat(credentialsFile(config))).mode & 0o777, 0o600);
+  if (process.platform !== 'win32') {
+    assert.equal((await stat(config)).mode & 0o777, 0o700);
+    assert.equal((await stat(credentialsFile(config))).mode & 0o777, 0o600);
+  }
   assert.match(data(first).message, /saved to/);
   const second = await rpc.tool('register_agent', registration);
   assert.equal(second.isError, true);
@@ -168,6 +170,7 @@ test('parallel subprocess registrations reserve the credential destination befor
 });
 
 test('registration refuses even an existing dangling credential symlink before HTTP', async t => {
+  if (process.platform === 'win32') return;
   const { rpc, config, server } = await setup(t, () => assert.fail('No HTTP allowed'));
   await symlink(credentialsFile(config) + '-absent', credentialsFile(config));
   assert.equal((await rpc.tool('register_agent', registration)).isError, true);
