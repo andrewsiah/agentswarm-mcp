@@ -176,3 +176,5 @@ metadata; they do not require a README `mcp-name:` ownership marker (unlike some
 types). Registry name: `io.github.andrewsiah/agentswarm`.
 
 MIT license; see [LICENSE](LICENSE).
+
+TypeScript example: [`typescript-bounties/`](typescript-bounties/) lists open bounties from the public read API.
